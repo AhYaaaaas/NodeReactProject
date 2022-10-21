@@ -1,21 +1,24 @@
 /*
  * @Date: 2022-10-20 17:55:07
  * @LastEditors: xuanyi_ge xuanyige87@gmail.com
- * @LastEditTime: 2022-10-20 20:35:56
- * @FilePath: \NodeReactProject\src\routers\accountRouter.js
+ * @LastEditTime: 2022-10-21 09:05:32
+ * @FilePath: \NodeReactProject-BE\src\routers\accountRouter.js
  */
 const SECRETKEY = "gexuanyi";
 const Router = require("express").Router();
 const jwt = require("jsonwebtoken");
-const { createUniqueUid,
-        createUniqueAccount,
-        verifyToken,
-        connectDb,
-        insertValue,
-        closeDB,
-        cryptoPassword,
-        selectValue
+const {
+  createUniqueUid,
+  createUniqueAccount,
+  verifyToken,
+  cryptoPassword,
 } = require("../utils");
+const {
+  insertValue,
+  closeDB,
+  connectDb,
+  selectValue
+} = require('../utils/sql.utils')
 Router.post("/register", (req, res) => {
   const conn = connectDb();
   const { userName, password } = req.body;
