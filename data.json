@@ -1,9 +1,40 @@
 {
-  "userInfo":{
-    "uAccount":"",
-    "userName":"",
-    "password":"",
-    "uid":"",
-    "avatar":""
+  "api/account":{
+    "POST":{
+      "/register":{
+        "request":{
+          "userName":"",
+          "password":"",
+          "uEmail":""
+        },
+        "response":{
+          "userName":"",
+          "uAccount":"",
+          "password":"",
+          "uid":"",
+          "uEmail":""
+        }
+      },
+      "/login":{
+        "request":{
+          "uAccount || uEmail":"",
+          "password":"",
+          "header":{
+            "token":""
+          }
+        },
+        "response":{
+          "status":"",
+          "token":"",
+          "userInfo": {
+            "avatar": "",
+            "uAccount": "",
+            "uEmail": "",
+            "uid": "",
+            "userName": ""
+          }
+        }
+      }
+    }
   }
 }
