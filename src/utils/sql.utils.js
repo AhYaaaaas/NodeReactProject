@@ -1,11 +1,12 @@
 /*
  * @Date: 2022-10-21 09:04:59
  * @LastEditors: xuanyi_ge xuanyige87@gmail.com
- * @LastEditTime: 2022-10-21 14:06:21
+ * @LastEditTime: 2022-10-22 23:09:58
  * @FilePath: \NodeReactProject-BE\src\utils\sql.utils.js
  */
 const { db: dbConfig } = require("../../project.config");
 const mysql = require("mysql");
+const NOT_EXIST = "Not Exist"
 const connectDb = function () {
   let conn = mysql.createConnection(dbConfig);
   conn.connect((err) => {
@@ -26,14 +27,17 @@ const insertValue = function (conn, tableName, field, value) {
 }
 const selectValue = function (conn, clomun, table, condition = "1=1") {
   const sql = `select ${clomun} from ${table} where ${condition}`;
+  console.log(sql);
   return new Promise((resolve, reject) => {
     conn.query(sql, (err, res) => {
       if (err) reject(err);
-      resolve(res[0]);
+      if (res[0]) resolve(res[0]);
+      else resolve(NOT_EXIST);
     });
   })
 }
 module.exports = {
+  NOT_EXIST,
   //连接数据库
   connectDb,
   //关闭数据库

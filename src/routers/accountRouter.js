@@ -1,12 +1,16 @@
 /*
  * @Date: 2022-10-20 17:55:07
  * @LastEditors: xuanyi_ge xuanyige87@gmail.com
- * @LastEditTime: 2022-10-22 09:44:03
+ * @LastEditTime: 2022-10-22 23:21:07
  * @FilePath: \NodeReactProject-BE\src\routers\accountRouter.js
  */
 const SECRETKEY = "gexuanyi";
 const Router = require("express").Router();
 const jwt = require("jsonwebtoken");
+const {
+  messageMap,
+  statusMap
+} = require("../../project.config");
 const {
   createUniqueUid,
   createUniqueAccount,
@@ -18,7 +22,8 @@ const {
   insertValue,
   closeDB,
   connectDb,
-  selectValue
+  selectValue,
+  NOT_EXIST
 } = require('../utils/sql.utils')
 Router.post("/register", (req, res) => {
   const conn = connectDb();
@@ -38,57 +43,61 @@ Router.post("/register", (req, res) => {
 // 登陆前验证token是否有效
 Router.use("/login", verifyToken);
 Router.post("/login", async (req, res) => {
-  let uid,queryResult;
-  let { password, uAccount } = req.body
-  if (req.user) {
-    uid = req.user.uid;
-    uAccount = req.user.uAccount;
-    queryResult = await selectValue(conn, "*", "userInfo", `uAccount = "${uAccount}"`);
-  } else {
-    const conn = connectDb();
-    queryResult = await selectValue(conn, "*", "userInfo", `(uAccount = "${uAccount}" or uEmail = "${uAccount}") and password = "${cryptoPassword(password)}"`);
-    closeDB(conn);
-  }
+  let { password, uAccount } = req.body;
+  const conn = connectDb();
+  const { uid, uAccount: tokenAccount } = req.user || {};
+  const queryResult =
+    await selectValue
+      (
+        conn, "*",
+        "userInfo",
+        `(uAccount = "${uAccount || tokenAccount}" or uEmail = "${uAccount || tokenAccount}") ${req.user ? "" : `and password = "${cryptoPassword(password)}"`}`
+      );
+  closeDB(conn);
+
   const token = jwt.sign({ uid, uAccount }, SECRETKEY, { expiresIn: 60 * 60 * 24 })
-  if (queryResult) {
+  if (queryResult!==NOT_EXIST) {
     const { password: _, ...rest } = queryResult
     res.send({
-      status: 200,
+      status: statusMap["OK"],
       token,
-      userInfo:rest
+      userInfo: rest
     })
   } else {
     res.send({
-      status: 404,
-      message:"账号或密码错误"
+      status: statusMap["BAD_REQUEST"],
+      message: messageMap["ACCOUNT_ERROR"]
     })
   }
 })
 const userMap = new Map();
-Router.post("/code", (req,res) => {
+Router.post("/code", (req, res) => {
   const { uEmail, uCode } = req.body;
-  if (uCode && userMap[uEmail] === +uCode) {
-    delete userMap[uEmail];
+  (uCode && userMap[uEmail] === +uCode) && (delete userMap[uEmail]);
+  res.send({
+    status: (uCode && userMap[uEmail] === +uCode) ? statusMap["OK"] : statusMap["BAD_REQUEST"],
+    message: (uCode && userMap[uEmail] === +uCode) ? messageMap["IDENTIFY_OK"] : messageMap["IDENTIFY_NOT_OK"]
+  })
+})
+Router.get("/code", (req, res) => {
+  const { uEmail } = req.query;
+  //检查邮箱是否被注册
+  const conn = connectDb();
+  const result = selectValue(conn, "uid", "userInfo", `uEmail = "${uEmail}"`);
+  if (result !== NOT_EXIST) {
     res.send({
-      status: 200,
-      message: "验证通过",
-    })
-  } else {
-    res.send({
-      status: 400,
-      message: "验证失败",
+      status: statusMap["BAD_REQUEST"],
+      message: messageMap["EMAIL_EXISTED"],
     })
   }
-})
-Router.get("/code", (req,res) => {
-  const { uEmail } = req.query;
+  closeDB(conn);
+  //生成发送验证码
   const code = parseInt(Math.random() * 8999 + 1000);
   userMap[uEmail] = code;
-  sendEmail(uEmail, code);
+  const error = sendEmail(uEmail, code);
   res.send({
-    message: "生成验证码完成",
-    status: 200,
-    code
+    message: error ? messageMap["EMAIL_ERROR"] : messageMap["GENERATE_CODE_SUCCESS"],
+    status: error ? statusMap["BAD_REQUEST"] : statusMap["OK"],
   })
 })
 module.exports = Router
