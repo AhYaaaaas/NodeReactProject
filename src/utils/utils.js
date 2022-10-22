@@ -1,7 +1,7 @@
 /*
  * @Date: 2022-10-21 09:06:41
  * @LastEditors: xuanyi_ge xuanyige87@gmail.com
- * @LastEditTime: 2022-10-21 13:29:40
+ * @LastEditTime: 2022-10-22 09:55:55
  * @FilePath: \NodeReactProject-BE\src\utils\utils.js
  */
 const { v4 } = require("uuid");
@@ -9,7 +9,7 @@ const jwt = require("jsonwebtoken");
 const crypto = require("crypto");
 const SECRETKEY = "gexuanyi";
 const { emailConfig } = require("../../project.config")
-const sendEmail = function (to,identifyCode) {
+const sendEmail = function (to, identifyCode) {
   const emailServer = require('nodemailer');
   const tunnel = emailServer.createTransport(emailConfig);
   tunnel.sendMail({
@@ -17,12 +17,9 @@ const sendEmail = function (to,identifyCode) {
     subject: '注册验证',
     text: `您的验证码是:${identifyCode},如非本人操作,请忽略`,
     to,
-  }, () => {
+  }, (err) => {
     if (err) {
       console.error(err);
-    }
-    else {
-      console.log(data);
     }
   })
 }
@@ -67,7 +64,6 @@ const cryptoPassword = (password)=> {
   return result;
 }
 module.exports = {
-  //创建唯一的用户ID
   createUniqueUid,
   verifyToken,
   createUniqueAccount,
