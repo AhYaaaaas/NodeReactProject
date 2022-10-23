@@ -1,7 +1,7 @@
 /*
  * @Date: 2022-10-21 09:04:59
  * @LastEditors: AhYaaaaas xuanyige87@gmail.com
- * @LastEditTime: 2022-10-23 11:04:47
+ * @LastEditTime: 2022-10-23 20:11:56
  * @FilePath: \NodeReactProject-BE\src\utils\sql.utils.js
  */
 const { db: dbConfig } = require("../../project.config");
@@ -37,6 +37,15 @@ const selectValue = function (conn, clomun, table, condition = "1=1") {
     closeDB(conn)
   })
 }
+const updateValue = async function (conn, table, clomun, newValue,condition) {
+  const sql = `update ${table} set ${clomun}=${newValue} where ${condition}`;
+  try {
+    await conn.query(sql);
+    closeDB(conn);
+  } catch (e) {
+    console.log(e);
+  }
+}
 module.exports = {
   NOT_EXIST,
   //连接数据库
@@ -45,6 +54,8 @@ module.exports = {
   closeDB,
   //插入数据
   insertValue,
-  //修改数据
+  //筛选数据
   selectValue,
+  //修改数据
+  updateValue,
 }

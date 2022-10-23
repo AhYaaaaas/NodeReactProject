@@ -1,18 +1,20 @@
 /*
  * @Date: 2022-10-21 09:06:41
  * @LastEditors: AhYaaaaas xuanyige87@gmail.com
- * @LastEditTime: 2022-10-23 12:09:12
+ * @LastEditTime: 2022-10-23 19:49:40
  * @FilePath: \NodeReactProject-BE\src\utils\utils.js
  */
 const { v4 } = require("uuid");
 const jwt = require("jsonwebtoken");
 const crypto = require("crypto");
+const fs = require("fs");
 const SECRETKEY = "gexuanyi";
 const {
   emailConfig,
   messageMap,
   statusMap
-} = require("../../project.config")
+} = require("../../project.config");
+const { fstat } = require("fs");
 const sendEmail = function (to, identifyCode) {
   try {
     const emailServer = require('nodemailer');
@@ -64,10 +66,22 @@ const cryptoPassword = (password) => {
   const result = crypto.createHmac("md5", SECRETKEY).update(password).digest("hex");
   return result;
 }
+const fileExist = async (filePath) => {
+  return new Promise((resolve,reject) => {
+    fs.stat(filePath, (err, stat) => {
+      if (!stat) {
+        resolve(true);
+      } else {
+        resolve(false);
+      }
+    })
+  })
+}
 module.exports = {
   createUniqueUid,
   verifyToken,
   createUniqueAccount,
   cryptoPassword,
-  sendEmail
+  sendEmail,
+  fileExist
 }
