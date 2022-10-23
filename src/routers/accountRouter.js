@@ -1,7 +1,7 @@
 /*
  * @Date: 2022-10-20 17:55:07
- * @LastEditors: xuanyi_ge xuanyige87@gmail.com
- * @LastEditTime: 2022-10-22 23:21:07
+ * @LastEditors: AhYaaaaas xuanyige87@gmail.com
+ * @LastEditTime: 2022-10-23 11:18:27
  * @FilePath: \NodeReactProject-BE\src\routers\accountRouter.js
  */
 const SECRETKEY = "gexuanyi";
@@ -53,10 +53,9 @@ Router.post("/login", async (req, res) => {
         "userInfo",
         `(uAccount = "${uAccount || tokenAccount}" or uEmail = "${uAccount || tokenAccount}") ${req.user ? "" : `and password = "${cryptoPassword(password)}"`}`
       );
-  closeDB(conn);
 
   const token = jwt.sign({ uid, uAccount }, SECRETKEY, { expiresIn: 60 * 60 * 24 })
-  if (queryResult!==NOT_EXIST) {
+  if (queryResult !== NOT_EXIST) {
     const { password: _, ...rest } = queryResult
     res.send({
       status: statusMap["OK"],
@@ -73,31 +72,32 @@ Router.post("/login", async (req, res) => {
 const userMap = new Map();
 Router.post("/code", (req, res) => {
   const { uEmail, uCode } = req.body;
-  (uCode && userMap[uEmail] === +uCode) && (delete userMap[uEmail]);
+  const isRight = (uCode && userMap[uEmail] === +uCode) && (delete userMap[uEmail]);
+  delete userMap[uEmail];
   res.send({
-    status: (uCode && userMap[uEmail] === +uCode) ? statusMap["OK"] : statusMap["BAD_REQUEST"],
-    message: (uCode && userMap[uEmail] === +uCode) ? messageMap["IDENTIFY_OK"] : messageMap["IDENTIFY_NOT_OK"]
+    status: isRight ? statusMap["OK"] : statusMap["BAD_REQUEST"],
+    message: isRight ? messageMap["IDENTIFY_OK"] : messageMap["IDENTIFY_NOT_OK"]
   })
 })
-Router.get("/code", (req, res) => {
+Router.get("/code", async (req, res) => {
   const { uEmail } = req.query;
   //检查邮箱是否被注册
   const conn = connectDb();
-  const result = selectValue(conn, "uid", "userInfo", `uEmail = "${uEmail}"`);
+  const result = await selectValue(conn, "uid", "userInfo", `uEmail = "${uEmail}"`);
   if (result !== NOT_EXIST) {
     res.send({
       status: statusMap["BAD_REQUEST"],
       message: messageMap["EMAIL_EXISTED"],
     })
+  } else {
+    //生成发送验证码
+    const code = parseInt(Math.random() * 8999 + 1000);
+    userMap[uEmail] = code;
+    const error = sendEmail(uEmail, code);
+    res.send({
+      message: error ? messageMap["EMAIL_ERROR"] : messageMap["GENERATE_CODE_SUCCESS"],
+      status: error ? statusMap["BAD_REQUEST"] : statusMap["OK"],
+    })
   }
-  closeDB(conn);
-  //生成发送验证码
-  const code = parseInt(Math.random() * 8999 + 1000);
-  userMap[uEmail] = code;
-  const error = sendEmail(uEmail, code);
-  res.send({
-    message: error ? messageMap["EMAIL_ERROR"] : messageMap["GENERATE_CODE_SUCCESS"],
-    status: error ? statusMap["BAD_REQUEST"] : statusMap["OK"],
-  })
 })
 module.exports = Router

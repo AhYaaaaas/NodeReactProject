@@ -1,7 +1,7 @@
 /*
  * @Date: 2022-10-21 09:06:41
- * @LastEditors: xuanyi_ge xuanyige87@gmail.com
- * @LastEditTime: 2022-10-22 23:24:59
+ * @LastEditors: AhYaaaaas xuanyige87@gmail.com
+ * @LastEditTime: 2022-10-23 12:09:12
  * @FilePath: \NodeReactProject-BE\src\utils\utils.js
  */
 const { v4 } = require("uuid");
@@ -32,28 +32,25 @@ const createUniqueUid = function () {
   return uid;
 }
 const verifyToken = (req, res, next) => {
-  const token = req.body.token || req.query.token || req.headers['token'];
-  if (token) {
+  const token = req.body.token || req.query.token || req.headers['authorization'];
+  if (req.body.uAccount && req.body.password) {
+    // 存在账号密码直接进入下一步校验
+    next();
+  } else if (token) {
+    // 存在token进行token校验
     jwt.verify(token, SECRETKEY, (err, decode) => {
+      // 非法token
       if (err) {
         res.send({
           message: messageMap["INVALID_TOKEN"],
           status: statusMap["BAD_REQUEST"],
         })
       } else {
+        // 合法token
         req.user = decode;
         next();
       }
     })
-  } else {
-    if (!req.body.uAccount && !req.body.password) {
-      res.send({
-        message: messageMap["TOKEN_DISAPPEAR"],
-        status: statusMap["BAD_REQUEST"]
-      })
-    } else {
-      next();
-    }
   }
 }
 const createUniqueAccount = () => {

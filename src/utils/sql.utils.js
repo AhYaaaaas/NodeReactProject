@@ -1,7 +1,7 @@
 /*
  * @Date: 2022-10-21 09:04:59
- * @LastEditors: xuanyi_ge xuanyige87@gmail.com
- * @LastEditTime: 2022-10-22 23:09:58
+ * @LastEditors: AhYaaaaas xuanyige87@gmail.com
+ * @LastEditTime: 2022-10-23 11:04:47
  * @FilePath: \NodeReactProject-BE\src\utils\sql.utils.js
  */
 const { db: dbConfig } = require("../../project.config");
@@ -34,6 +34,7 @@ const selectValue = function (conn, clomun, table, condition = "1=1") {
       if (res[0]) resolve(res[0]);
       else resolve(NOT_EXIST);
     });
+    closeDB(conn)
   })
 }
 module.exports = {
