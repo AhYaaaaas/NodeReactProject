@@ -1,7 +1,7 @@
 /*
  * @Date: 2022-10-21 09:06:41
  * @LastEditors: AhYaaaaas xuanyige87@gmail.com
- * @LastEditTime: 2022-10-23 19:49:40
+ * @LastEditTime: 2022-10-25 17:51:34
  * @FilePath: \NodeReactProject-BE\src\utils\utils.js
  */
 const { v4 } = require("uuid");
@@ -37,6 +37,7 @@ const verifyToken = (req, res, next) => {
   const token = req.body.token || req.query.token || req.headers['authorization'];
   if (req.body.uAccount && req.body.password) {
     // 存在账号密码直接进入下一步校验
+    console.log("ap 1");
     next();
   } else if (token) {
     // 存在token进行token校验
@@ -50,6 +51,7 @@ const verifyToken = (req, res, next) => {
       } else {
         // 合法token
         req.user = decode;
+        console.log(decode);
         next();
       }
     })

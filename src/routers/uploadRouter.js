@@ -1,38 +1,48 @@
 /*
  * @Date: 2022-10-23 19:09:36
  * @LastEditors: AhYaaaaas xuanyige87@gmail.com
- * @LastEditTime: 2022-10-24 23:00:29
+ * @LastEditTime: 2022-10-25 20:31:56
  * @FilePath: \NodeReactProject-BE\src\routers\uploadRouter.js
  */
 const Router = require("express").Router();
 const { fileExist } = require("../utils/utils")
 const path = require("path");
 const fs = require("fs");
-const { updateValue, connectDb } = require("../utils/sql.utils");
-const { gzip } = require("zlib");
+const { updateValue, connectDb, selectValue } = require("../utils/sql.utils");
+const BASEURL = "http://localhost:5000/"
 // 上传头像
 Router.post("/avatar", async (req, res) => {
-  const file = req.files.file,
-    { uid } = req.body,
-    filePath = path.join(__dirname, `../../public/user/${uid}/avatar`);
-  const isNotExist = await fileExist(filePath);
-  if (isNotExist) {
-    await fs.mkdir(filePath, { recursive: true }, (err) => {
-      if (err) throw err;
-    })
-  }
-  file.mv(filePath + '/' + file.name);
+  const { uid } = req.body,
+    file = req.files.file,
+    filePath = path.join(__dirname, `../../public/avatar`);
+  // const isNotExist = await fileExist(filePath);
+  // if (isNotExist) {
+  //   await fs.mkdir(filePath, { recursive: true }, (err) => {
+  //     if (err) throw err;
+  //   })
+  // }
+  file.mv(filePath + '/' + uid + file.name, file);
   const conn = connectDb();
-  await updateValue(conn, "userinfo", "avatar", `"user/${uid}/avatar/${file.name}"`, `uid = "${uid}"`);
+  // 数据库里的头像地址前缀不带uid
+  // 文件夹里的头像地址带uid防止重复
+  await updateValue(conn, "userinfo", "avatar", `"${file.name}"`, `uid = "${uid}"`);
   res.status(200).send("OK")
 })
+//获得头像
+Router.get('/avatar', async (req, res) => {
+  const { uid } = req.query;
+  const conn = connectDb();
+  const result = await selectValue(conn, "avatar", "userinfo", `uid = "${uid}"`);
+  res.send(BASEURL + `avatar/${uid + result['avatar']}`);
+})
+
 
 //上传书籍
 Router.post("/book", (req, res) => {
 
 })
 //获得书籍
-Router.get("/book", (req,res) => {
+Router.get("/book", (req, res) => {
   const { bookName } = req.query;
   const filePath = path.join(__dirname, `../../public/books/${bookName}`);
   const buff = fs.readFileSync(filePath);
