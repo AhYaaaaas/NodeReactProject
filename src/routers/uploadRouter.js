@@ -1,7 +1,7 @@
 /*
  * @Date: 2022-10-23 19:09:36
  * @LastEditors: AhYaaaaas xuanyige87@gmail.com
- * @LastEditTime: 2022-10-25 20:31:56
+ * @LastEditTime: 2022-10-26 22:22:30
  * @FilePath: \NodeReactProject-BE\src\routers\uploadRouter.js
  */
 const Router = require("express").Router();
@@ -9,6 +9,7 @@ const { fileExist } = require("../utils/utils")
 const path = require("path");
 const fs = require("fs");
 const { updateValue, connectDb, selectValue } = require("../utils/sql.utils");
+const NOT_EXIST = require("../utils/sql.utils");
 const BASEURL = "http://localhost:5000/"
 // 上传头像
 Router.post("/avatar", async (req, res) => {
@@ -33,7 +34,9 @@ Router.get('/avatar', async (req, res) => {
   const { uid } = req.query;
   const conn = connectDb();
   const result = await selectValue(conn, "avatar", "userinfo", `uid = "${uid}"`);
-  res.send(BASEURL + `avatar/${uid + result['avatar']}`);
+  if (result['avatar'] !== "default.jpeg") res.send(BASEURL + `avatar/${uid + result['avatar']}`);
+  else res.send(BASEURL + `avatar/${ result['avatar']}`)
+
 })
 
 

@@ -1,7 +1,7 @@
 /*
  * @Date: 2022-10-21 09:04:59
  * @LastEditors: AhYaaaaas xuanyige87@gmail.com
- * @LastEditTime: 2022-10-23 20:11:56
+ * @LastEditTime: 2022-10-26 22:01:40
  * @FilePath: \NodeReactProject-BE\src\utils\sql.utils.js
  */
 const { db: dbConfig } = require("../../project.config");
@@ -11,14 +11,12 @@ const connectDb = function () {
   let conn = mysql.createConnection(dbConfig);
   conn.connect((err) => {
     if (err) throw err
-    console.log('数据库连接成功');
   })
   return conn;
 }
 const closeDB = function (conn) {
   conn.end((err) => {
     if (err) throw err
-    console.log('数据库断开连接');
   })
 }
 const insertValue = function (conn, tableName, field, value) {

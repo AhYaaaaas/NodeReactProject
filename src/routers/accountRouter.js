@@ -1,7 +1,7 @@
 /*
  * @Date: 2022-10-20 17:55:07
  * @LastEditors: AhYaaaaas xuanyige87@gmail.com
- * @LastEditTime: 2022-10-23 11:18:27
+ * @LastEditTime: 2022-10-26 21:43:10
  * @FilePath: \NodeReactProject-BE\src\routers\accountRouter.js
  */
 const SECRETKEY = "gexuanyi";
@@ -30,7 +30,8 @@ Router.post("/register", (req, res) => {
   const { userName, password, uEmail } = req.body;
   const uid = createUniqueUid();
   const uAccount = createUniqueAccount();
-  const result = insertValue(conn, "userInfo", "(userName,password,uid,uAccount,uEmail)", `("${userName}","${cryptoPassword(password)}","${uid}","${uAccount}","${uEmail}")`);
+  const r_1 = insertValue(conn, "userInfo", "(userName,password,uid,uAccount,uEmail)", `("${userName}","${cryptoPassword(password)}","${uid}","${uAccount}","${uEmail}")`);
+  const r_2 = insertValue(conn, "personalinfo", "(uid,userName)", `("${uid}","${userName}")`);
   closeDB(conn);
   res.send({
     userName,
