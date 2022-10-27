@@ -1,7 +1,7 @@
 /*
  * @Date: 2022-10-23 19:09:36
  * @LastEditors: AhYaaaaas xuanyige87@gmail.com
- * @LastEditTime: 2022-10-26 22:22:30
+ * @LastEditTime: 2022-10-27 21:40:16
  * @FilePath: \NodeReactProject-BE\src\routers\uploadRouter.js
  */
 const Router = require("express").Router();
@@ -33,10 +33,10 @@ Router.post("/avatar", async (req, res) => {
 Router.get('/avatar', async (req, res) => {
   const { uid } = req.query;
   const conn = connectDb();
-  const result = await selectValue(conn, "avatar", "userinfo", `uid = "${uid}"`);
+  let result = await selectValue(conn, "avatar", "userinfo", `uid = "${uid}"`);
+  result = result[0];
   if (result['avatar'] !== "default.jpeg") res.send(BASEURL + `avatar/${uid + result['avatar']}`);
   else res.send(BASEURL + `avatar/${ result['avatar']}`)
-
 })
 
 

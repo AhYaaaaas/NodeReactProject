@@ -1,7 +1,7 @@
 /*
  * @Date: 2022-10-20 17:10:36
  * @LastEditors: AhYaaaaas xuanyige87@gmail.com
- * @LastEditTime: 2022-10-26 21:47:01
+ * @LastEditTime: 2022-10-27 21:46:49
  * @FilePath: \NodeReactProject-BE\src\index.js
  */
 // 引入第三方库
@@ -22,6 +22,7 @@ app.use(uploader({
   createParentPath: true,
   defParamCharset: "utf-8",
 }));
+
 app.use("/api/account", accountRouter);
 app.use("/api/upload", uploadRouter);
 app.use('/api/update',updateRouter);

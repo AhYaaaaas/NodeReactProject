@@ -1,7 +1,7 @@
 /*
  * @Date: 2022-10-21 09:06:41
  * @LastEditors: AhYaaaaas xuanyige87@gmail.com
- * @LastEditTime: 2022-10-27 14:19:01
+ * @LastEditTime: 2022-10-27 20:37:09
  * @FilePath: \NodeReactProject-BE\src\utils\utils.js
  */
 const { v4 } = require("uuid");
@@ -92,7 +92,7 @@ const fileExist = async (filePath) => {
 const formatDate = () => {
   const TODY = new Date();
   const Y = TODY.getFullYear(),
-    M = TODY.getMonth(),
+    M = TODY.getMonth()+1,
     D = TODY.getDate(),
     H = TODY.getHours(),
     MIN = TODY.getMinutes(),

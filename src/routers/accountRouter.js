@@ -1,7 +1,7 @@
 /*
  * @Date: 2022-10-20 17:55:07
  * @LastEditors: AhYaaaaas xuanyige87@gmail.com
- * @LastEditTime: 2022-10-26 21:43:10
+ * @LastEditTime: 2022-10-27 21:35:52
  * @FilePath: \NodeReactProject-BE\src\routers\accountRouter.js
  */
 const SECRETKEY = "gexuanyi";
@@ -23,7 +23,8 @@ const {
   closeDB,
   connectDb,
   selectValue,
-  NOT_EXIST
+  NOT_EXIST,
+  createTable
 } = require('../utils/sql.utils')
 Router.post("/register", (req, res) => {
   const conn = connectDb();
@@ -32,6 +33,14 @@ Router.post("/register", (req, res) => {
   const uAccount = createUniqueAccount();
   const r_1 = insertValue(conn, "userInfo", "(userName,password,uid,uAccount,uEmail)", `("${userName}","${cryptoPassword(password)}","${uid}","${uAccount}","${uEmail}")`);
   const r_2 = insertValue(conn, "personalinfo", "(uid,userName)", `("${uid}","${userName}")`);
+  const r_3 = createTable(conn, `
+  CREATE TABLE ${"`" + uid + "`"}(
+    indexkey int AUTO_INCREMENT UNIQUE, 
+    description varchar(255) NOT NULL, 
+    actionstime varchar(255) NOT NULL, 
+    type ENUM("upload","download","update"), 
+    bookid varchar(255))
+  `)
   closeDB(conn);
   res.send({
     userName,
@@ -54,10 +63,9 @@ Router.post("/login", async (req, res) => {
         "userInfo",
         `(uAccount = "${uAccount || tokenAccount}" or uEmail = "${uAccount || tokenAccount}") ${req.user ? "" : `and password = "${cryptoPassword(password)}"`}`
       );
-
   const token = jwt.sign({ uid, uAccount }, SECRETKEY, { expiresIn: 60 * 60 * 24 })
   if (queryResult !== NOT_EXIST) {
-    const { password: _, ...rest } = queryResult
+    const { password: _, ...rest } = queryResult[0];
     res.send({
       status: statusMap["OK"],
       token,

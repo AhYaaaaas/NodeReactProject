@@ -1,7 +1,7 @@
 /*
  * @Date: 2022-10-21 09:04:59
  * @LastEditors: AhYaaaaas xuanyige87@gmail.com
- * @LastEditTime: 2022-10-26 22:01:40
+ * @LastEditTime: 2022-10-27 21:38:55
  * @FilePath: \NodeReactProject-BE\src\utils\sql.utils.js
  */
 const { db: dbConfig } = require("../../project.config");
@@ -25,21 +25,28 @@ const insertValue = function (conn, tableName, field, value) {
 }
 const selectValue = function (conn, clomun, table, condition = "1=1") {
   const sql = `select ${clomun} from ${table} where ${condition}`;
-  console.log(sql);
   return new Promise((resolve, reject) => {
     conn.query(sql, (err, res) => {
       if (err) reject(err);
-      if (res[0]) resolve(res[0]);
-      else resolve(NOT_EXIST);
+      if (res[0]) resolve(res);
+      else if (!res[0]) resolve(NOT_EXIST);
     });
     closeDB(conn)
   })
 }
-const updateValue = async function (conn, table, clomun, newValue,condition) {
+const updateValue = async function (conn, table, clomun, newValue, condition) {
   const sql = `update ${table} set ${clomun}=${newValue} where ${condition}`;
   try {
     await conn.query(sql);
     closeDB(conn);
+  } catch (e) {
+    console.log(e);
+  }
+}
+const createTable = async (conn,sql) => {
+  try {
+    const res = await conn.query(sql);
+    return res;
   } catch (e) {
     console.log(e);
   }
@@ -56,4 +63,6 @@ module.exports = {
   selectValue,
   //修改数据
   updateValue,
+  //创建表
+  createTable
 }
