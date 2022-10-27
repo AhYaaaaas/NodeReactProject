@@ -1,7 +1,7 @@
 /*
  * @Date: 2022-10-21 09:06:41
  * @LastEditors: AhYaaaaas xuanyige87@gmail.com
- * @LastEditTime: 2022-10-25 17:51:34
+ * @LastEditTime: 2022-10-27 14:19:01
  * @FilePath: \NodeReactProject-BE\src\utils\utils.js
  */
 const { v4 } = require("uuid");
@@ -15,6 +15,7 @@ const {
   statusMap
 } = require("../../project.config");
 const { fstat } = require("fs");
+//发送验证码邮件
 const sendEmail = function (to, identifyCode) {
   try {
     const emailServer = require('nodemailer');
@@ -29,10 +30,13 @@ const sendEmail = function (to, identifyCode) {
     return e;
   }
 }
+//随机创建uid
 const createUniqueUid = function () {
   let uid = (v4() + "").replace(/\-/g, "");
   return uid;
 }
+
+// 验证token
 const verifyToken = (req, res, next) => {
   const token = req.body.token || req.query.token || req.headers['authorization'];
   if (req.body.uAccount && req.body.password) {
@@ -57,6 +61,8 @@ const verifyToken = (req, res, next) => {
     })
   }
 }
+
+//随机生成一个账号
 const createUniqueAccount = () => {
   const precision = parseInt(Math.random() * 99) + 1;
   const rawPre = (Date.now() - new Date(1624206802955).getTime()) / precision;
@@ -68,8 +74,10 @@ const cryptoPassword = (password) => {
   const result = crypto.createHmac("md5", SECRETKEY).update(password).digest("hex");
   return result;
 }
+
+//判断文件是否存在
 const fileExist = async (filePath) => {
-  return new Promise((resolve,reject) => {
+  return new Promise((resolve, reject) => {
     fs.stat(filePath, (err, stat) => {
       if (!stat) {
         resolve(true);
@@ -79,11 +87,24 @@ const fileExist = async (filePath) => {
     })
   })
 }
+
+//格式化时间
+const formatDate = () => {
+  const TODY = new Date();
+  const Y = TODY.getFullYear(),
+    M = TODY.getMonth(),
+    D = TODY.getDate(),
+    H = TODY.getHours(),
+    MIN = TODY.getMinutes(),
+    Sec = TODY.getSeconds();
+  return `${Y}-${M >= 10 ? M + '' : '0' + M}-${D >= 10 ? D + '' : '0' + D} ${H >= 10 ? H + '' : '0' + H}:${MIN >= 10 ? MIN + '' : '0' + MIN}:${Sec >= 10 ? Sec + '' : '0' + Sec}`;
+}
 module.exports = {
   createUniqueUid,
   verifyToken,
   createUniqueAccount,
   cryptoPassword,
   sendEmail,
-  fileExist
+  fileExist,
+  formatDate
 }
