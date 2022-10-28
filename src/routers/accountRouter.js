@@ -1,7 +1,7 @@
 /*
  * @Date: 2022-10-20 17:55:07
  * @LastEditors: AhYaaaaas xuanyige87@gmail.com
- * @LastEditTime: 2022-10-27 21:35:52
+ * @LastEditTime: 2022-10-28 19:35:27
  * @FilePath: \NodeReactProject-BE\src\routers\accountRouter.js
  */
 const SECRETKEY = "gexuanyi";
@@ -26,13 +26,13 @@ const {
   NOT_EXIST,
   createTable
 } = require('../utils/sql.utils')
-Router.post("/register", (req, res) => {
+Router.post("/register", async (req, res) => {
   const conn = connectDb();
   const { userName, password, uEmail } = req.body;
   const uid = createUniqueUid();
   const uAccount = createUniqueAccount();
-  const r_1 = insertValue(conn, "userInfo", "(userName,password,uid,uAccount,uEmail)", `("${userName}","${cryptoPassword(password)}","${uid}","${uAccount}","${uEmail}")`);
-  const r_2 = insertValue(conn, "personalinfo", "(uid,userName)", `("${uid}","${userName}")`);
+  const r_1 = await insertValue(conn, "userInfo", "(userName,password,uid,uAccount,uEmail)", `("${userName}","${cryptoPassword(password)}","${uid}","${uAccount}","${uEmail}")`);
+  const r_2 = await insertValue(conn, "personalinfo", "(uid,userName)", `("${uid}","${userName}")`);
   const r_3 = createTable(conn, `
   CREATE TABLE ${"`" + uid + "`"}(
     indexkey int AUTO_INCREMENT UNIQUE, 

@@ -1,14 +1,14 @@
 /*
  * @Date: 2022-10-20 17:10:36
  * @LastEditors: AhYaaaaas xuanyige87@gmail.com
- * @LastEditTime: 2022-10-27 21:46:49
+ * @LastEditTime: 2022-10-28 20:53:18
  * @FilePath: \NodeReactProject-BE\src\index.js
  */
 // 引入第三方库
 const express = require('express'),
   cors = require("cors"),
   path = require("path"),
-  uploader = require("express-fileupload");
+  uploader = require("express-fileupload"); 
 // 引入路由
 const accountRouter = require("./routers/accountRouter.js");
 const uploadRouter = require("./routers/uploadRouter");

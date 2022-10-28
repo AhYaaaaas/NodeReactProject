@@ -1,13 +1,13 @@
 /*
  * @Date: 2022-10-26 21:46:31
  * @LastEditors: AhYaaaaas xuanyige87@gmail.com
- * @LastEditTime: 2022-10-27 21:46:59
+ * @LastEditTime: 2022-10-28 22:13:31
  * @FilePath: \NodeReactProject-BE\src\routers\update.js
  */
 
 const { connectDb, updateValue, selectValue, insertValue, closeDB } = require("../utils/sql.utils")
 const Router = require("express").Router();
-const NOT_EXIST = require("../utils/sql.utils");
+const {NOT_EXIST} = require("../utils/sql.utils");
 const { formatDate } = require("../utils/utils");
 //更新个人信息
 Router.put('/personalinfo', async (req, res) => {
@@ -39,21 +39,24 @@ Router.get('/personalinfo', async (req, res) => {
 })
 // 添加个人操作
 
-Router.post('/actions', (req, res) => {
-  const { uid, description,type,bookId } = req.body,
+Router.post('/actions', async (req, res) => {
+  const { uid, description,type,bookid } = req.body,
     date = formatDate(),
     conn = connectDb();
-  insertValue(conn, `${"`" + uid + "`"}`, "(description,actionstime,type,bookid)", `("${description}","${date}","${type??'update'}","${bookId??''}")`);
+  await insertValue(conn, `${"`" + uid + "`"}`, "(description,actionstime,type,bookid)", `("${description}","${date}","${type??'update'}","${bookid??''}")`);
   res.status(200).send("OK");
 })
 // 查询个人操作历史
 Router.get('/actions', async (req, res) => {
   const { uid } = req.query;
   const conn = connectDb();
-  const { indexkey, ...rest } = await selectValue(conn, "*", `${"`" + uid + "`"}`);
+  const result = await selectValue(conn, "*", `${"`" + uid + "`"}`);
   let array = []
-  for (let key in rest) {
-    array.push(rest[key]);
+  if (result !== NOT_EXIST) {
+    const { indexkey, ...rest } = result;
+    for (let key in rest) {
+      array.push(rest[key]);
+    }
   }
   res.status(200).send(array);
 })

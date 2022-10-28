@@ -1,7 +1,7 @@
 /*
  * @Date: 2022-10-21 09:04:59
  * @LastEditors: AhYaaaaas xuanyige87@gmail.com
- * @LastEditTime: 2022-10-27 21:38:55
+ * @LastEditTime: 2022-10-28 19:55:50
  * @FilePath: \NodeReactProject-BE\src\utils\sql.utils.js
  */
 const { db: dbConfig } = require("../../project.config");
@@ -9,8 +9,10 @@ const mysql = require("mysql");
 const NOT_EXIST = "Not Exist"
 const connectDb = function () {
   let conn = mysql.createConnection(dbConfig);
-  conn.connect((err) => {
-    if (err) throw err
+  conn.connect();
+  conn.on('error', err => {
+    console.log('Re-connecting lost connection: ');
+    conn = mysql.createConnection(dbConfig);
   })
   return conn;
 }
@@ -19,8 +21,8 @@ const closeDB = function (conn) {
     if (err) throw err
   })
 }
-const insertValue = function (conn, tableName, field, value) {
-  const res = conn.query(`insert into ${tableName}${field} values${value}`);
+const insertValue = async function (conn, tableName, field, value) {
+  const res = await conn.query(`insert into ${tableName}${field} values${value}`);
   return res;
 }
 const selectValue = function (conn, clomun, table, condition = "1=1") {
@@ -43,7 +45,7 @@ const updateValue = async function (conn, table, clomun, newValue, condition) {
     console.log(e);
   }
 }
-const createTable = async (conn,sql) => {
+const createTable = async (conn, sql) => {
   try {
     const res = await conn.query(sql);
     return res;
