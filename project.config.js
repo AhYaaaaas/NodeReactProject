@@ -41,5 +41,6 @@ module.exports = {
     "password": "123456",
     "uid": "dbf7f27b1867455297555ca25fc60c31",
     "uEmail": "2780775353@qq.com"
-  }
+  },
+  baseUrl: "http://localhost:5000",
 }

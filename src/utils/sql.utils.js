@@ -1,7 +1,7 @@
 /*
  * @Date: 2022-10-21 09:04:59
  * @LastEditors: AhYaaaaas xuanyige87@gmail.com
- * @LastEditTime: 2022-10-28 19:55:50
+ * @LastEditTime: 2022-10-29 20:29:30
  * @FilePath: \NodeReactProject-BE\src\utils\sql.utils.js
  */
 const { db: dbConfig } = require("../../project.config");
@@ -30,8 +30,8 @@ const selectValue = function (conn, clomun, table, condition = "1=1") {
   return new Promise((resolve, reject) => {
     conn.query(sql, (err, res) => {
       if (err) reject(err);
-      if (res[0]) resolve(res);
-      else if (!res[0]) resolve(NOT_EXIST);
+      if (res && res[0]) resolve(res);
+      else resolve(NOT_EXIST);
     });
     closeDB(conn)
   })
@@ -53,6 +53,16 @@ const createTable = async (conn, sql) => {
     console.log(e);
   }
 }
+const fuzzyQuery = async (conn, tableName, keyWord) => {
+  const sql = `select * from ${tableName} where bookid like "%${keyWord}%" or bookname like "%${keyWord}%"`;
+  return new Promise((resolve,reject) => {
+    conn.query(sql, (err,res) => {
+      if (err) reject(err);
+      if (res && res[0]) resolve(res);
+      else resolve(NOT_EXIST);
+    })
+  })
+}
 module.exports = {
   NOT_EXIST,
   //连接数据库
@@ -66,5 +76,7 @@ module.exports = {
   //修改数据
   updateValue,
   //创建表
-  createTable
+  createTable,
+  //模糊查询
+  fuzzyQuery
 }
