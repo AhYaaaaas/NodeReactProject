@@ -1,7 +1,7 @@
 /*
  * @Date: 2022-10-26 21:46:31
  * @LastEditors: AhYaaaaas xuanyige87@gmail.com
- * @LastEditTime: 2022-10-30 10:35:06
+ * @LastEditTime: 2022-10-30 15:35:29
  * @FilePath: \NodeReactProject-BE\src\routers\update.js
  */
 
@@ -56,6 +56,9 @@ Router.get('/actions', async (req, res) => {
   if (result !== NOT_EXIST) {
     const { indexkey, ...rest } = result;
     array = obj2array(rest);
+    array = array.sort((a,b) => {
+      return new Date(a.actionstime) - new Date(b.actionstime);
+    })
   }
   res.status(200).send(array);
 })

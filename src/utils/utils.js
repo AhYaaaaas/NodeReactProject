@@ -1,7 +1,7 @@
 /*
  * @Date: 2022-10-21 09:06:41
  * @LastEditors: AhYaaaaas xuanyige87@gmail.com
- * @LastEditTime: 2022-10-30 10:05:39
+ * @LastEditTime: 2022-10-30 12:32:08
  * @FilePath: \NodeReactProject-BE\src\utils\utils.js
  */
 const { v4 } = require("uuid");

@@ -1,14 +1,14 @@
 /*
  * @Date: 2022-10-20 17:40:02
- * @LastEditors: xuanyi_ge xuanyige87@gmail.com
- * @LastEditTime: 2022-10-22 23:25:47
+ * @LastEditors: AhYaaaaas xuanyige87@gmail.com
+ * @LastEditTime: 2022-10-30 19:36:15
  * @FilePath: \NodeReactProject-BE\project.config.js
  */
 module.exports = {
   db: {
     host: '127.0.0.1',
     port: 3306,
-    user: 'root', //NodeReactProject
+    user: 'NodeReactProject', //root
     password: 'gexuanyi0',
     database: 'NodeReactProject'
   },
@@ -35,12 +35,5 @@ module.exports = {
     BAD_REQUEST: 400,
     NOT_FOUND: 404,
   },
-  defaultUser: {
-    "userName": "小兵张嘎",
-    "uAccount": 42244505943,
-    "password": "123456",
-    "uid": "dbf7f27b1867455297555ca25fc60c31",
-    "uEmail": "2780775353@qq.com"
-  },
-  baseUrl: "http://localhost:5000",
+  baseUrl: "http://43.143.194.105:5000",
 }

@@ -1,7 +1,7 @@
 /*
  * @Date: 2022-10-21 09:04:59
  * @LastEditors: AhYaaaaas xuanyige87@gmail.com
- * @LastEditTime: 2022-10-30 10:15:13
+ * @LastEditTime: 2022-10-30 12:27:15
  * @FilePath: \NodeReactProject-BE\src\utils\sql.utils.js
  */
 const { db: dbConfig } = require("../../project.config");
@@ -54,8 +54,8 @@ const createTable = async (conn, sql) => {
     console.log(e);
   }
 }
-const fuzzyQuery = async (conn, tableName, keyWord) => {
-  const sql = `select * from ${tableName} where bookid like "%${keyWord}%" or bookname like "%${keyWord}%"`;
+const fuzzyQuery = async (conn, tableName, keyWord,col=null) => {
+  const sql = `select * from ${tableName} where ${col??"bookid"} like "%${keyWord}%" or ${col??"bookname"} like "%${keyWord}%"`;
   return new Promise((resolve,reject) => {
     conn.query(sql, (err,res) => {
       if (err) reject(err);
