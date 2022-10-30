@@ -1,7 +1,7 @@
 /*
  * @Date: 2022-10-21 09:04:59
  * @LastEditors: AhYaaaaas xuanyige87@gmail.com
- * @LastEditTime: 2022-10-29 20:29:30
+ * @LastEditTime: 2022-10-30 10:15:13
  * @FilePath: \NodeReactProject-BE\src\utils\sql.utils.js
  */
 const { db: dbConfig } = require("../../project.config");
@@ -22,6 +22,7 @@ const closeDB = function (conn) {
   })
 }
 const insertValue = async function (conn, tableName, field, value) {
+  console.log(`insert into ${tableName}${field} values${value}`);
   const res = await conn.query(`insert into ${tableName}${field} values${value}`);
   return res;
 }

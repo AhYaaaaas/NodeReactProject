@@ -1,7 +1,7 @@
 /*
  * @Date: 2022-10-21 09:06:41
  * @LastEditors: AhYaaaaas xuanyige87@gmail.com
- * @LastEditTime: 2022-10-27 20:37:09
+ * @LastEditTime: 2022-10-30 10:05:39
  * @FilePath: \NodeReactProject-BE\src\utils\utils.js
  */
 const { v4 } = require("uuid");
@@ -99,6 +99,14 @@ const formatDate = () => {
     Sec = TODY.getSeconds();
   return `${Y}-${M >= 10 ? M + '' : '0' + M}-${D >= 10 ? D + '' : '0' + D} ${H >= 10 ? H + '' : '0' + H}:${MIN >= 10 ? MIN + '' : '0' + MIN}:${Sec >= 10 ? Sec + '' : '0' + Sec}`;
 }
+//obj->array
+const obj2array = function (obj) {
+  let array = [];
+  for (let key in obj) {
+    array.push(obj[key]);
+  }
+  return array;
+}
 module.exports = {
   createUniqueUid,
   verifyToken,
@@ -106,5 +114,6 @@ module.exports = {
   cryptoPassword,
   sendEmail,
   fileExist,
-  formatDate
+  formatDate,
+  obj2array
 }
